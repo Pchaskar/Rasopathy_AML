@@ -278,6 +278,40 @@ ICAclust<-function(data=data, cluster_method="ward.D", mojena=3.75, times = c(20
   return(result)
 }
 
+get.cpm <- function(dds, meta_info)
+{
+  
+  # Construct edgeR object
+  
+  se<-assay(dds)
+  
+  coldata<-meta_info[match(colnames(se),rownames(meta_info)), ]
+  
+  library("edgeR")
+  genetable <- data.frame(gene.id=rownames(se))
+  y <- DGEList(counts=se, 
+               samples=coldata, 
+               genes=genetable)
+  names(y)
+  
+  # DEsign formula same as deseq
+  
+  design <- model.matrix(~ RASOPATHY, y$samples)
+  
+  # Filter genes with low counts
+  keep <- filterByExpr(y, design)
+  table(keep)
+  
+  # recompute library siz
+  y <- y[keep, , keep.lib.sizes=FALSE]
+  
+  # normalization
+  lcpm <- cpm(y, log = TRUE, prior.count = 0.25)
+  
+  topMatrix <- lcpm
+  
+  return(topMatrix)
+}
 
   
 
