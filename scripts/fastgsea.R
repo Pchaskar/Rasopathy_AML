@@ -57,11 +57,11 @@ oxphos <- oxphos[!duplicated(oxphos$V1),]
 
 
 pathways$JE_Sarry_OXPHOS<-oxphos
-pathways$Sigras<-names(sigras$sig.hgnc)
-pathways$Sigmpas<-names(sigmpas$sig.hgnc)
-pathways$Sigerk_IEG<-sigmerk$siglist.hgnc$IEG
-pathways$Sigerk_ILG<-sigmerk$siglist.hgnc$ILG
-pathways$Sigerk_DEG<-sigmerk$siglist.hgnc$DEG
+pathways$SIGRAS<-names(sigras$sig.hgnc)
+pathways$SIGMPAS<-names(sigmpas$sig.hgnc)
+pathways$SIGERK_IEG<-sigmerk$siglist.hgnc$IEG
+pathways$SIGERK_ILG<-sigmerk$siglist.hgnc$ILG
+pathways$SIGERK_DEG<-sigmerk$siglist.hgnc$DEG
 
 fgseaRes <- fgsea(pathways, ranks, minSize=15, maxSize = 500, nperm=1000)
 class(fgseaRes)
@@ -97,46 +97,50 @@ fgseaResTidy_top$pathway <- sapply(pathway_names_split, "[", 1)
 plot_gsea<-ggplot(fgseaResTidy_top, aes(reorder(pathway, NES), NES)) +
   geom_col(aes(fill= padj<0.1)) +
   coord_flip() +
-  labs(x="Pathway", y="Normalized Enrichment Score",
-       title="Hallmark pathways NES from fgsea") + 
+  labs(x="Gene Sets", y="Normalized Enrichment Score",
+       title="C6: oncogenic signature gene sets NES from fgsea") + 
   theme_classic()
 
-svg("./images/fgsea.svg", width = 10, height = 10)
+svg("./images/fgsea_c6_oncogenic_signatures.svg", width = 10, height = 10)
 plot_gsea
 dev.off()
 
+# Write xlsx file
+library("openxlsx")
+
+write.xlsx(fgseaResTidy,row.names = TRUE, file = paste("./gsea/c6_oncogenic_signatures","fgsea.xlsx", sep="_"))
+
 svg("./images/fgsea_KRAS.600.LUNG.BREAST_UP.V1_DN.svg", width = 6, height = 6)
 plotEnrichment(pathways[["KRAS.600.LUNG.BREAST_UP.V1_DN"]],
-               ranks) + labs(title="KRAS.600.LUNG.BREAST_UP.V1_DN")
+               ranks, ticksSize = 0.5) + labs(title="KRAS.600.LUNG.BREAST_UP.V1_DN")
 dev.off()
 
 svg("./images/fgsea_Sigerk_IEG.svg", width = 6, height = 6)
-plotEnrichment(pathways[["Sigerk_IEG"]],
-               ranks) + labs(title="Sigerk_IEG")
+plotEnrichment(pathways[["SIGERK_IEG"]],
+               ranks, ticksSize = 0.5) + labs(title="Sigerk_IEG")
 dev.off()
 
 svg("./images/fgsea_Sigerk_ILG.svg", width = 6, height = 6)
-plotEnrichment(pathways[["Sigerk_ILG"]],
-               ranks) + labs(title="Sigerk_ILG")
+plotEnrichment(pathways[["SIGERK_ILG"]],
+               ranks, ticksSize = 0.5) + labs(title="Sigerk_ILG")
 dev.off()
 
 svg("./images/fgsea_Sigerk_DEG.svg", width = 6, height = 6)
-plotEnrichment(pathways[["Sigerk_DEG"]],
-               ranks) + labs(title="Sigerk_DEG")
+plotEnrichment(pathways[["SIGERK_DEG"]],
+               ranks, ticksSize = 0.5) + labs(title="Sigerk_DEG")
 dev.off()
-
 
 svg("./images/fgsea_JE_Sarry_OXPHOS.svg", width = 6, height = 6)
 plotEnrichment(pathways[["JE_Sarry_OXPHOS"]],
-               ranks) + labs(title="JE_Sarry_OXPHOS")
+               ranks, ticksSize = 0.5) + labs(title="JE_Sarry_OXPHOS")
 dev.off()
 
 svg("./images/fgsea_Sigras.svg", width = 6, height = 6)
-plotEnrichment(pathways[["Sigras"]],
-               ranks) + labs(title="Sigras")
+plotEnrichment(pathways[["SIGRAS"]],
+               ranks, ticksSize = 0.5) + labs(title="SIGRAS")
 dev.off()
 
 svg("./images/fgsea_Sigmpas.svg", width = 6, height = 6)
-plotEnrichment(pathways[["Sigmpas"]],
-               ranks) + labs(title="Sigmpas")
+plotEnrichment(pathways[["SIGMPAS"]],
+               ranks, ticksSize = 0.5) + labs(title="SIGMPAS")
 dev.off()
